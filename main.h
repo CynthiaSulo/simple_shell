@@ -18,4 +18,7 @@ void prompt_display(void);
 char *input_read(void);
 void command_execute(char *command, char *program_name);
 int main(int argc, char *argv[]);
+void displayShellPrompt(void);
+char *readUserInput(void);
+void executeCommand(char *command, char *program_name);
 #endif
