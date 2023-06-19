@@ -14,5 +14,8 @@ void display_prompt(void);
 char *read_line(void);
 void execute_command(char *command, char *program_name);
 char **get_path(void);
-
+void prompt_display(void);
+char *input_read(void);
+void command_execute(char *command, char *program_name);
+int main(int argc, char *argv[]);
 #endif
