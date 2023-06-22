@@ -5,18 +5,21 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+
 /**
-  *prompt_display - Display the shell prompt
-  */
-void prompt_display(void)
+ * display_prompt - Displays the shell prompt
+ */
+void display_prompt(void)
 {
-	write(STDOUT_FILENO, "#cisfun$ ", 9);
+	write(STDOUT_FILENO, ":) ", 3);
 }
+
 /**
-  *input_read - Read a line of input from the user
-  *Return: total number of lines
-  */
-char *input_read(void)
+ * read_line - Reads a line of input from the user
+ *
+ * Return: The input line as a string
+ */
+char *read_line(void)
 {
 	char *line = NULL;
 	size_t bufsize = 0;
@@ -36,15 +39,18 @@ char *input_read(void)
 			exit(EXIT_FAILURE);
 		}
 	}
+
 	return (line);
 }
+#define MAX_ARGUMENTS 10
 /**
-  *command_execute - execute command
-  *@command: pointer to the command to be executed
-  *@program_name: pointer to the program name
-  */
-void command_execute(char *command, char *program_name)
+ * execute_command - Executes the given command
+ * @command: The command to execute
+ * @program_name: The name of the program
+ */
+void execute_command(char *command, char *program_name)
 {
+	int i;
 	pid_t pid = fork();
 
 	if (pid == -1)
@@ -54,20 +60,16 @@ void command_execute(char *command, char *program_name)
 	}
 	else if (pid == 0)
 	{
-		char *arguments[10];
-		char *token;
-		int i = 0;
+		char *arguments[MAX_ARGUMENTS];
 
-		token = strtok(command, " \t\n");
+		arguments[0] = strtok(command, " \n");
+		i = 1;
 
-		while (token != NULL)
-		{
-			arguments[i++] = token;
-			token = strtok(NULL, " \t\n");
-		}
+		while (i < MAX_ARGUMENTS - 1 && (arguments[i] = strtok(NULL, " \n")) != NULL)
+			i++;
 		arguments[i] = NULL;
 
-		execve(arguments[0], arguments, environ);
+		execvp(arguments[0], arguments);
 		perror(program_name);
 		exit(EXIT_FAILURE);
 	}
@@ -79,7 +81,55 @@ void command_execute(char *command, char *program_name)
 
 		if (strcmp(command, "exit") == 0)
 		{
-			return;
+			exit(EXIT_SUCCESS);
 		}
 	}
+}
+/**
+  * main - Entry point of shell program
+  *
+  * Return: 0 on success
+  */
+int main(void)
+{
+	char *line;
+
+	while (1)
+	{
+		display_prompt();
+		line = read_line();
+		line[strcspn(line, "\n")] = '\0';
+		if (strlen(line) > 0)
+		{
+			if (strncmp(line, "exit", 4) == 0)
+			{
+				execute_command(line, "shell");
+			}
+			else if (strncmp(line, "cd", 2) == 0)
+			{
+				if (chdir(line + 3) != 0)
+				{
+					perror("shell");
+				}
+			}
+			else if (line[0] == '/')
+			{
+				if (access(line, F_OK) == 0)
+				{
+					execute_command(line, "shell");
+				}
+				else
+				{
+					perror("shell");
+				}
+			}
+			else
+			{
+				execute_command(line, "shell");
+			}
+		}
+
+		free(line);
+	}
+	return (0);
 }

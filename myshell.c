@@ -7,161 +7,158 @@
 #include <sys/wait.h>
 
 /**
- * displayShellPrompt - Display the shell prompt
+ * display_prompt - Displays the shell prompt
  */
-void displayShellPrompt(void)
+void display_prompt(void)
 {
-    write(STDOUT_FILENO, ":) ", 4);
+	write(STDOUT_FILENO, ":) ", 3);
 }
 
 /**
- * readUserInput - reads line of input from the user
- * Return: total number of lines
+ * read_line - Reads a line of input from the user
+ *
+ * Return: The input line as a string
  */
-char *readUserInput(void)
+char *read_line(void)
 {
-    char *line = NULL;
-    size_t bufsize = 0;
-    ssize_t chars_read;
+	char *line = NULL;
+	size_t bufsize = 0;
+	ssize_t chars_read;
 
-    chars_read = getline(&line, &bufsize, stdin);
+	chars_read = getline(&line, &bufsize, stdin);
 
-    if (chars_read == -1)
-    {
-        if (feof(stdin))
-        {
-            exit(EXIT_SUCCESS);
-        }
-        else
-        {
-            perror("readline");
-            exit(EXIT_FAILURE);
-        }
-    }
-    return line;
+	if (chars_read == -1)
+	{
+		if (feof(stdin))
+		{
+			exit(EXIT_SUCCESS);
+		}
+		else
+		{
+			perror("readline");
+			exit(EXIT_FAILURE);
+		}
+	}
+	return (line);
 }
 
+#define MAX_ARGUMENTS 10
+
 /**
- * executeCommand - Execute command
- * @command: Pointer to the command to be executed
- * @program_name: Pointer to the program name
+ * execute_command - Executes the given command
+ * @command: The command to execute
+ * @program_name: The name of the program
  */
-void executeCommand(char *command, char *program_name)
+void execute_command(char *command, char *program_name)
 {
-    char *path = getenv("PATH");
-    char *token;
-    char *full_path;
-    int found = 0;
-    pid_t pid;
+	int i;
+	pid_t pid = fork();
 
-    token = strtok(path, ":");
+	if (pid == -1)
+	{
+		perror("fork");
+		return;
+	}
+	else if (pid == 0)
+	{
+		char *arguments[MAX_ARGUMENTS];
 
-    while (token != NULL)
-    {
-        full_path = malloc(strlen(token) + strlen(command) + 2);
-        sprintf(full_path, "%s/%s", token, command);
+		arguments[0] = strtok(command, " \n");
+		i = 1;
 
-        if (access(full_path, X_OK) == 0)
-        {
-            found = 1;
-            break;
-        }
+		while (i < MAX_ARGUMENTS - 1 && (arguments[i] = strtok(NULL, " \n")) != NULL)
+			i++;
+		arguments[i] = NULL;
 
-        free(full_path);
-        token = strtok(NULL, ":");
-    }
+		execvp(arguments[0], arguments);
+		perror(program_name);
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		int status;
 
-    if (!found)
-    {
-        fprintf(stderr, "%s: 1: %s: not found\n", program_name, command);
-        return;
-    }
+		wait(&status);
 
-    pid = fork();
-
-    if (pid == -1)
-    {
-        perror("fork");
-        return;
-    }
-    else if (pid == 0)
-    {
-        char *arguments[10];
-        int i = 0;
-
-        token = strtok(command, " \t\n");
-
-        while (token != NULL)
-        {
-            arguments[i++] = token;
-            token = strtok(NULL, " \t\n");
-        }
-        arguments[i] = NULL;
-
-        execve(full_path, arguments, environ);
-        perror(program_name);
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        int status;
-        wait(&status);
-    }
-
-    free(full_path);
+		if (strcmp(command, "exit") == 0)
+		{
+			exit(EXIT_SUCCESS);
+		}
+	}
 }
 /**
- * main - Entry point of the shell program
- * @argc: Number of command-line arguments
- * @argv: Array of command-line arguments
- * Return: Exit status
+ * _getpath - Retrieves the full path of a command
+ * @command: The command to resolve
+ *
+ * Return: The full path of the command if found, NULL otherwise
  */
-int main(int argc, char *argv[])
+char *_getpath(char *command)
 {
-    char *line;
+	char *path = getenv("PATH");
+	char *token;
+	char *command_path = NULL;
 
-    (void)argc;
+	token = strtok(path, ":");
+	while (token != NULL)
+	{
+		char *temp = malloc(strlen(token) + strlen(command) + 2);
 
-    while (1)
-    {
-        displayShellPrompt();
-        line = readUserInput();
+		sprintf(temp, "%s/%s", token, command);
+		if (access(temp, F_OK) == 0)
+		{
+			command_path = temp;
+			break;
+		}
+		free(temp);
+		token = strtok(NULL, ":");
+	}
+	return (command_path);
+}
+/**
+  * main - Entry point of Shell Program
+  *
+  * Return: 0 on Sucess
+  */
+int main(void)
+{
+	char *line;
 
-        if (strlen(line) > 0)
-        {
-            char *command_with_path = NULL;
-            char *token;
-            char *path = getenv("PATH");
-            char *path_copy = strdup(path);
+	while (1)
+	{
+		display_prompt();
+		line = read_line();
+		line[strcspn(line, "\n")] = '\0';
+		if (strlen(line) > 0)
+		{
+			if (strncmp(line, "exit", 4) == 0)
+			{
+				execute_command(line, "shell");
+			}
+			else if (strncmp(line, "cd", 2) == 0)
+			{
+				if (chdir(line + 3) != 0)
+				{
+					perror("shell");
+				}
+			}
+			else if (line[0] == '/')
+			{
+				if (access(line, F_OK) == 0)
+				{
+					execute_command(line, "shell");
+				}
+				else
+				{
+					perror("shell");
+				}
+			}
+			else
+			{
+				execute_command(line, "shell");
+			}
+		}
+		free(line);
+	}
 
-            token = strtok(path_copy, ":");
-
-            while (token != NULL)
-            {
-                command_with_path = malloc(strlen(token) + strlen(line) + 2);
-                sprintf(command_with_path, "%s/%s", token, line);
-
-                if (access(command_with_path, X_OK) == 0)
-                {
-                    executeCommand(command_with_path, argv[0]);
-                    break;
-                }
-
-                free(command_with_path);
-                command_with_path = NULL;
-                token = strtok(NULL, ":");
-            }
-
-            free(path_copy);
-
-            if (command_with_path == NULL)
-            {
-                fprintf(stderr, "%s: 1: %s: not found\n", argv[0], line);
-            }
-        }
-
-        free(line);
-    }
-
-    return 0;
+	return (0);
 }
