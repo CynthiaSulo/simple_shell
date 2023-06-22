@@ -24,15 +24,4 @@ void executeCommand(char *command, char *program_name);
 void parse_command(char *line, char **command, char **args);
 void find_command(char *command, char **full_path);
 char *_getpath(char *command);
-/* Shell built-in commands */
-int shell_cd(char **args);
-int shell_help(char **args);
-int shell_exit(char **args);
-
-/* Utility functions */
-void handle_error(const char *msg);
-char *read_line(void);
-char **split_line(char *line);
-int is_builtin(char **args);
-
 #endif
