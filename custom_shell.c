@@ -7,19 +7,19 @@
 #include <sys/wait.h>
 
 /**
- * display_prompt - Displays the shell prompt
+ * render_prompt - Displays the shell prompt
  */
-void display_prompt(void)
+void render_prompt(void)
 {
 	write(STDOUT_FILENO, ":) ", 3);
 }
 
 /**
- * read_line - Reads a line of input from the user
+ * retrieve_line - Reads a line of input from the user
  *
  * Return: The input line as a string
  */
-char *read_line(void)
+char *retrieve_line(void)
 {
 	char *line = NULL;
 	size_t bufsize = 0;
@@ -44,11 +44,11 @@ char *read_line(void)
 }
 #define MAX_ARGUMENTS 10
 /**
- * execute_command - Executes the given command
+ * command_execute - Executes the given command
  * @command: The command to execute
  * @program_name: The name of the program
  */
-void execute_command(char *command, char *program_name)
+void command_execute(char *command, char *program_name)
 {
 	int i;
 	pid_t pid = fork();
@@ -86,24 +86,24 @@ void execute_command(char *command, char *program_name)
 	}
 }
 /**
-  * main - Entry point of shell program
+  * function_main - Entry point of shell program
   *
   * Return: 0 on success
   */
-int main(void)
+int function_main(void)
 {
 	char *line;
 
 	while (1)
 	{
-		display_prompt();
-		line = read_line();
+		render_prompt();
+		line = retrieve_line();
 		line[strcspn(line, "\n")] = '\0';
 		if (strlen(line) > 0)
 		{
 			if (strncmp(line, "exit", 4) == 0)
 			{
-				execute_command(line, "shell");
+				command_execute(line, "shell");
 			}
 			else if (strncmp(line, "cd", 2) == 0)
 			{
@@ -116,7 +116,7 @@ int main(void)
 			{
 				if (access(line, F_OK) == 0)
 				{
-					execute_command(line, "shell");
+					command_execute(line, "shell");
 				}
 				else
 				{
@@ -125,7 +125,7 @@ int main(void)
 			}
 			else
 			{
-				execute_command(line, "shell");
+				command_execute(line, "shell");
 			}
 		}
 
