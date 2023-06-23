@@ -75,12 +75,12 @@ void handleExecution(char *command, char *program_name)
 	}
 }
 /**
- * themainfunc - Entry point of the shell program
+ * main - Entry point of the shell program
  * @argc: The argument count
  * @argv: The argument vector
  * Return: Always 0
  */
-int themainfunc(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	char *line;
 	(void)argc;

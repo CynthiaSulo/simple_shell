@@ -32,9 +32,4 @@ char *retrieve_line(void);
 char *capture_input(void);
 void handleExecution(char *command, char *program_name);
 void runCommand(char *command, char *program_name);
-int main_function(void);
-int function_main(void);
-int mainFunction(void);
-int themainfunc(int argc, char *argv[]);
-
 #endif

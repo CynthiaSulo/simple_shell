@@ -115,11 +115,11 @@ char *_getpath(char *command)
 	return (command_path);
 }
 /**
-  * mainFunction - Entry point of Shell Program
+  * main - Entry point of Shell Program
   *
   * Return: 0 on Sucess
   */
-int mainFunction(void)
+int main(void)
 {
 	char *line;
 

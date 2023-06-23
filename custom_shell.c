@@ -86,11 +86,11 @@ void command_execute(char *command, char *program_name)
 	}
 }
 /**
-  * function_main - Entry point of shell program
+  * main - Entry point of shell program
   *
   * Return: 0 on success
   */
-int function_main(void)
+int main(void)
 {
 	char *line;
 

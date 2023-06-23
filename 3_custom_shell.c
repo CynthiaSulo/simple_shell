@@ -43,7 +43,7 @@ char *readUserInput(void)
  */
 void print_environment(void)
 {
-	char **environ;
+	extern char **environ;
 	int i = 0;
 
 	while (environ[i] != NULL)
@@ -94,10 +94,10 @@ void runCommand(char *command, char *program_name)
 	}
 }
 /**
- * main_function - Entry point of shell program
+ * main - Entry point of shell program
  * Return: 0 on success
  */
-int main_function(void)
+int main(void)
 {
 	char *line;
 
