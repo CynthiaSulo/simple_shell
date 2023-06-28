@@ -1,59 +1,59 @@
 #include "main.h"
 #include <string.h>
 /**
- * parse_data - Function to parse the data obtained from getline
+ * parse_input - Function to parse the data obtained from getline
  * @input_str: User input string
  * Return: Tokenized values as an array of strings
  */
-char **parse_data(char *input_str)
+char **parse_input(char *input_str)
 {
 	const char *delimiter = " \n\t\r";
-	char *token;
-	char **tokens;
+	char *str_token;
+	char **arguments;
 	size_t token_count = 0;
-	size_t token_len = 0;
+	size_t length = 0;
 
-	tokens = malloc(sizeof(char *) * (token_count + 5));
-	if (tokens == NULL)
+	arguments = malloc(sizeof(char *) * (token_count + 5));
+	if (arguments == NULL)
 	{
-		free_tokens(tokens);
+		free_arguments(arguments);
 		return (NULL);
 	}
-	token = strtok(input_str, delimiter);
-	token_len = _strlen(token);
-	while (token != NULL)
+	str_token = strtok(input_str, delimiter);
+	length = _strlen(str_token);
+	while (str_token != NULL)
 	{
-		tokens[token_count] = malloc(token_len + 1);
-		if (tokens[token_count] == NULL)
+		arguments[token_count] = malloc(length + 1);
+		if (arguments[token_count] == NULL)
 		{
-			free_tokens(tokens);
+			free_arguments(arguments);
 			return (NULL);
 		}
-		strcpy(tokens[token_count], token);
-		token = strtok(NULL, delimiter);
-		if (token != NULL)
+		_strcpy(arguments[token_count], str_token);
+		str_token = strtok(NULL, delimiter);
+		if (str_token != NULL)
 		{
-			token_len = _strlen(token);
+			length = _strlen(str_token);
 		}
 		token_count++;
 	}
-	tokens[token_count] = NULL;
-	return (tokens);
+	arguments[token_count] = NULL;
+	return (arguments);
 }
 
 /**
- * free_tokens - Function to free the tokens array
- * @tokens: Pointer to an array of strings (tokens)
+ * free_arguments - Function to free the tokens array
+ * @arguments: Pointer to an array of strings (tokens)
  * Return: None
  */
-void free_tokens(char **tokens)
+void free_arguments(char **arguments)
 {
-	int i = 0;
+	int j = 0;
 
-	while (tokens[i] != NULL)
+	while (arguments[j] != NULL)
 	{
-		free(tokens[i]);
-		i++;
+		free(arguments[j]);
+		j++;
 	}
-	free(tokens);
+	free(arguments);
 }

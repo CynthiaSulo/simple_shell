@@ -3,12 +3,12 @@
 #include <string.h>
 
 /**
- * str_length - Calculates the length of a string.
+ * _strlen - Calculates the length of a string.
  * @str: The input string.
  *
  * Return: The length of the string.
  */
-int str_length(char *str)
+int _strlen(char *str)
 {
 	int length = 0;
 
@@ -24,13 +24,13 @@ int str_length(char *str)
 }
 
 /**
- * str_copy - Copies a string from source to destination.
+ * _strcpy - Copies a string from source to destination.
  * @dest: The destination string.
  * @src: The source string.
  *
  * Return: A pointer to the destination string.
  */
-char *str_copy(char *dest, char *src)
+char *_strcpy(char *dest, char *src)
 {
 	int i = 0;
 	int j;
@@ -56,13 +56,13 @@ char *str_copy(char *dest, char *src)
 }
 
 /**
- * str_compare - Compares two strings.
+ * _strcmp - Compares two strings.
  * @str1: The first string.
  * @str2: The second string.
  *
  * Return: 0, a negative value, or a positive value
  */
-int str_compare(char *str1, char *str2)
+int _strcmp(char *str1, char *str2)
 {
 	if (str1 == NULL || str2 == NULL)
 	{
@@ -79,13 +79,13 @@ int str_compare(char *str1, char *str2)
 }
 
 /**
- * str_find - Finds the first occurrence of a character in a string.
+ * _strchr - Finds the first occurrence of a character in a string.
  * @str: The input string.
  * @c: The character to find.
  *
  * Return: A pointer to the first occurrence or NULL
  */
-char *str_find(char *str, char c)
+char *_strchr(char *str, char c)
 {
 	if (str == NULL)
 	{
@@ -106,13 +106,13 @@ char *str_find(char *str, char c)
 }
 
 /**
- * str_concat - Concatenates two strings.
+ * _strcat - Concatenates two strings.
  * @dest: The destination string.
  * @src: The source string.
  *
  * Return: A pointer to the destination string.
  */
-char *str_concat(char *dest, char *src)
+char *_strcat(char *dest, char *src)
 {
 	int i = 0;
 	int j = 0;

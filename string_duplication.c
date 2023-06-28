@@ -2,30 +2,30 @@
 
 /**
  * _strdup - Creates a duplicate of a string.
- * @scr: The source string to duplicate.
+ * @str: The source string to duplicate.
  *
  * Return: A pointer to duplicated string, NULL if memory alloc fails.
  */
-char *_strdup(char *scr)
+char *_strdup(char *str)
 {
-	size_t i;
 	char *dup;
+	int j;
 
-	if (scr == NULL)
+	if (str == NULL)
 	{
 		return (NULL);
 	}
 
-	dup = malloc(_strlen(scr) + 1);
+	dup = malloc(_strlen(str) + 1);
 
 	if (dup != NULL)
 	{
-		for (i = 0; i < _strlen(scr); i++)
+		for (j = 0; j < _strlen(str); j++)
 		{
-			dup[i] = scr[i];
+			dup[j] = str[j];
 		}
 
-		dup[i] = '\0';
+		dup[j] = '\0';
 
 		return (dup);
 	}
