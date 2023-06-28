@@ -33,16 +33,6 @@ void execute_input(char **input);
 void free_parsed_input(char **input);
 char *read_line(int *end_of_file);
 char *remove_comment(char *input_str);
-
-typedef struct data_shell
-{
-    int counter;
-    int status;
-    int loop_flag;
-    int eof_flag;
-    char *user_input;
-} shell_data;
-
 void shell_loop(shell_data *shell_data);
 char *_strdup(char *src);
 
