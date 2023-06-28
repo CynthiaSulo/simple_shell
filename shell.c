@@ -1,36 +1,31 @@
 #include "main.h"
-
 /**
  * main - Entry point of the custom shell
  * This function implements a basic shell
  * reads user input, parses it,executes the commands.
- * displays a shell prompt, reads input from the user
- * processes it until an interrupt signal is received.
+ * displays a shell prompt, reads input from the user.
  *
  * Return: Always returns 0.
  */
 int main(void)
 {
 	char *shell_prompt = "$ ";
-	char **parsed_input;
 	char *user_input = NULL;
-	int input_length;
-	int signal_flag = 0;
 	size_t input_size = 0;
+	int input_length, signal_flag = 0;
+	char **arguments;
 
 	signal(SIGINT, handle_sigint);
-
 	while (1)
 	{
 		if (isatty(STDIN_FILENO) == 1)
 		{
-			write(STDOUT_FILENO, shell_prompt, _str_length(shell_prompt));
+			write(STDOUT_FILENO, shell_prompt, _strlen(shell_prompt));
 		}
 		input_length = getline(&user_input, &input_size, stdin);
 		if (input_length == -1)
 		{
 			free(user_input);
-
 			exit(0);
 		}
 		if (user_input[input_length - 1] == '\n')
@@ -38,16 +33,19 @@ int main(void)
 			user_input[input_length - 1] = '\0';
 		}
 		if (signal_flag)
+			free(user_input);
+			exit(0);
+		if (_strcmp(user_input, "exit") == 0)
 		{
 			free(user_input);
-			break;
+			shell_exit();
 		}
-		parsed_input = parse_input(user_input);
-		if (parsed_input != NULL)
+		arguments = parse_input(user_input);
+		if (arguments != NULL)
 		{
-			execute_input(parsed_input);
+			execute_input(arguments);
 		}
-		free_parsed_input(parsed_input);
+		free_parsed_input(arguments);
 	}
 	free(user_input);
 	return (0);
