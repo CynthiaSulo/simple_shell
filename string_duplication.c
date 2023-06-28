@@ -2,7 +2,7 @@
 
 /**
  * _strdup - Creates a duplicate of a string.
- * @src: The source string to duplicate.
+ * @scr: The source string to duplicate.
  *
  * Return: A pointer to duplicated string, NULL if memory alloc fails.
  */
