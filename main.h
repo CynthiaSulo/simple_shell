@@ -3,33 +3,47 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
-#define MAX_ARGUMENTS 10
+#include <sys/stat.h>
+#include <signal.h>
 
 extern char **environ;
 
-void display_prompt(void);
-void execute_command(char *command, char *program_name);
-char **get_path(void);
-void prompt_display(void);
-char *input_read(void);
-void command_execute(char *command, char *program_name);
-void displayShellPrompt(void);
-char *readUserInput(void);
-void executeCommand(char *command, char *program_name);
-void parse_command(char *line, char **command, char **args);
-void find_command(char *command, char **full_path);
-char *_getpath(char *command);
-void execute_command(char *command, char *program_name);
-void render_prompt(void);
-void present_prompt(void);
-void exhibit_prompt(void);
-char *retrieve_line(void);
-char *capture_input(void);
-void handleExecution(char *command, char *program_name);
-void runCommand(char *command, char *program_name);
+/* Function prototypes */
+char *_strchr(char *s, char c);
+int _strcmp(const char *s1, const char *s2);
+size_t _strlen(const char *str);
+char *fetch_env(char *name);
+char *resolve_path(char *command);
+void execute_command(char **arguments);
+char **parse_data(char *str);
+void free_tokens(char **tokens);
+int str_length(char *str);
+char *str_copy(char *dest, char *src);
+int str_compare(char *str1, char *str2);
+char *str_find(char *str, char c);
+char *str_concat(char *dest, char *src);
+int _str_length(char *str);
+void handle_sigint(int signal);
+char **parse_input(char *input);
+void execute_input(char **input);
+void free_parsed_input(char **input);
+char *read_line(int *end_of_file);
+char *remove_comment(char *input_str);
+
+typedef struct data_shell
+{
+    int counter;
+    int status;
+    int loop_flag;
+    int eof_flag;
+    char *user_input;
+} shell_data;
+
+void shell_loop(shell_data *shell_data);
+char *_strdup(char *src);
+
 #endif

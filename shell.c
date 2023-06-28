@@ -1,106 +1,54 @@
 #include "main.h"
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 
 /**
- * display_prompt - Displays the shell prompt
+ * main - Entry point of the custom shell
+ * This function implements a basic shell
+ * reads user input, parses it,executes the commands.
+ * displays a shell prompt, reads input from the user
+ * processes it until an interrupt signal is received.
+ *
+ * Return: Always returns 0.
  */
-void display_prompt(void)
+int main(void)
 {
-	write(STDOUT_FILENO, "#cisfun$ ", 9);
-}
-/**
- * read_line - Reads a line of input from the user
- * Return: The input line as a string
- */
-char *read_line(void)
-{
-	char *line = NULL;
-	size_t bufsize = 0;
-	ssize_t chars_read;
+	char *shell_prompt = "$ ";
+	char **parsed_input;
+	char *user_input = NULL;
+	int input_length;
+	int signal_flag = 0;
+	size_t input_size = 0;
 
-	chars_read = getline(&line, &bufsize, stdin);
-
-	if (chars_read == -1)
-	{
-		if (feof(stdin))
-		{
-			exit(EXIT_SUCCESS);
-		}
-		else
-		{
-			perror("readline");
-			exit(EXIT_FAILURE);
-		}
-	}
-	return (line);
-}
-/**
- * execute_command - Executes the given command
- * @command: The command to execute
- * @program_name: The name of the program
- */
-void execute_command(char *command, char *program_name)
-{
-	pid_t pid = fork();
-
-	if (pid == -1)
-	{
-		perror("fork");
-		return;
-	}
-	else if (pid == 0)
-	{
-		char *arguments[3];
-
-		arguments[0] = command;
-		arguments[1] = NULL;
-
-		execve(arguments[0], arguments, environ);
-		perror(program_name);
-		exit(EXIT_FAILURE);
-	}
-	else
-	{
-		int status;
-
-		wait(&status);
-
-		if (strcmp(command, "exit") == 0)
-		{
-			return;
-		}
-	}
-}
-/**
- * main - Entry point of the shell program
- * @argc: The argument count
- * @argv: The argument vector
- * Return: Always 0
- */
-int main(int argc, char *argv[])
-{
-	char *line;
-	(void)argc;
+	signal(SIGINT, handle_sigint);
 
 	while (1)
 	{
-		display_prompt();
-
-		line = read_line();
-
-		line[strcspn(line, "\n")] = '\0';
-
-		if (strlen(line) > 0)
+		if (isatty(STDIN_FILENO) == 1)
 		{
-			execute_command(line, argv[0]);
+			write(STDOUT_FILENO, shell_prompt, _str_length(shell_prompt));
 		}
+		input_length = getline(&user_input, &input_size, stdin);
+		if (input_length == -1)
+		{
+			free(user_input);
 
-		free(line);
+			exit(0);
+		}
+		if (user_input[input_length - 1] == '\n')
+		{
+			user_input[input_length - 1] = '\0';
+		}
+		if (signal_flag)
+		{
+			free(user_input);
+			break;
+		}
+		parsed_input = parse_input(user_input);
+		if (parsed_input != NULL)
+		{
+			execute_input(parsed_input);
+		}
+		free_parsed_input(parsed_input);
 	}
+	free(user_input);
 	return (0);
 }
