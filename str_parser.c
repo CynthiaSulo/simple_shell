@@ -29,7 +29,7 @@ char **parse_data(char *input_str)
 			free_tokens(tokens);
 			return (NULL);
 		}
-		_strcpy(tokens[token_count], token);
+		strcpy(tokens[token_count], token);
 		token = strtok(NULL, delimiter);
 		if (token != NULL)
 		{

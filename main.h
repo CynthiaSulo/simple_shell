@@ -27,13 +27,12 @@ int str_compare(char *str1, char *str2);
 char *str_find(char *str, char c);
 char *str_concat(char *dest, char *src);
 int _str_length(char *str);
-void handle_sigint(int signal);
+void handle_sigint(int signum);
 char **parse_input(char *input);
 void execute_input(char **input);
 void free_parsed_input(char **input);
 char *read_line(int *end_of_file);
 char *remove_comment(char *input_str);
-void shell_loop(shell_data *shell_data);
 char *_strdup(char *src);
 
 #endif

@@ -1,4 +1,15 @@
 #include "main.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+/**
+ * exit_shell - handles shell termination
+ * Return: void
+ */
+void exit_shell(void)
+{
+	exit(0);
+}
 /**
  * main - Entry point of the custom shell
  * This function implements a basic shell
@@ -29,16 +40,16 @@ int main(void)
 			exit(0);
 		}
 		if (user_input[input_length - 1] == '\n')
-		{
 			user_input[input_length - 1] = '\0';
-		}
 		if (signal_flag)
+		{
 			free(user_input);
 			exit(0);
+		}
 		if (_strcmp(user_input, "exit") == 0)
 		{
 			free(user_input);
-			shell_exit();
+			exit_shell();
 		}
 		arguments = parse_input(user_input);
 		if (arguments != NULL)
